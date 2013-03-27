@@ -1,0 +1,174 @@
+I wrote this yum2smart-converter script in 2009, while running Fedora
+Linux. There were no smart channel configuration files then, and the
+channels - aka repositories, had to be configured manually.
+
+It was originally released on the Fedora forum under my alias as CD-RW.
+http://forums.fedoraforum.org/showthread.php?t=211956
+
+To make it easy for others to find my work, I'm moving all my
+BSD-licensed code to my Github account: https://github.com/sputnik-1/
+
+All I ask is that you abide by the liberal BSD licence, and give me the
+credit for initial development of formcheck. Any feedback is welcome.
+
+------------------------------------------------------------------------
+
+yum2smart-convertor. Yum Repo to Smart PM channel convertor script.
+
+The create-smart-channels.php script will create any missing smart
+channel files from the equivalent yum repo files. Any new smart channel
+files will be placed in a /new-smart-channels subdir of the yum repos
+directory.
+
+Installation
+------------
+
+These instructions are for Linux based OS's.
+
+After downloading the file called create-smart-channels.php, change the
+permissions to something like:
+
+# chown root:root create-smart-channels.php
+# chmod 755 create-smart-channels.php
+
+Then place the script in the directory that contains your yum repo
+files, usually /etc/yum.repos.d/
+
+If you have set any open_basedir restrictions in /etc/php.ini, you will
+also need to add '/etc/smart/channels/:' to the search paths to allow
+create-smart-channels.php to read the contents of the
+/etc/smart/channels/ directory.
+
+Warning:
+
+Do not allow php access to the whole of the /etc directory. This could
+be a security issue. Whatever access restrictions are set with
+open_basedir (if any), you should override these in your httpd.conf
+file, to restrict apache's php module to only allow access to php files
+under your apache's document root. To do this, use something like this
+in your httpd.conf file:
+
+<Directory />
+Options None
+AllowOverride None
+Order Deny,Allow
+Deny from all
+
+# these are the only directories which the apache PHP module can
+# have access to. This setting overrides the settings in the
+# global php.ini file, which applies to the CLI version of PHP.
+
+php_admin_value open_basedir '/path/to/htdocs/:/path/to/php-manual/'
+php_admin_flag display_errors OFF
+
+</Directory>
+
+Running the script
+------------------
+
+create-smart-channels.php requires two arguments, and also accepts an
+optional third argument. The invocation line for the script is:
+
+    ./create-smart-channels.php <release-version> <basearch> [d]
+
+    <release-version> is a required parameter for the Fedora version number.
+
+    <basearch> is a required parameter for the target OS platform.
+
+    [d] is an optional parameter to turn on debugging output.
+
+You can find the release-version and basearch for your particular
+machine, by comparing a yum repo file, with the equivalent existing
+smart channel file.
+
+If we compare the yum fedora.repo file and the smart fedora.channel file:
+
+yum fedora.repo file (1st section):
+
+[fedora]
+name=Fedora $releasever - $basearch
+failovermethod=priority
+#baseurl=http://download.fedora.redhat.com/pub/fedora/linux/releases/$releasever/Everything/$basearch/os
+mirrorlist=http://mirrors.fedoraproject.org/mirrorlist?repo=fedora-$releasever&arch=$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora file:///etc/pki/rpm-gpg/RPM-GPG-KEY
+
+smart fedora.channel file (1st section):
+
+[core]
+name=Fedora 8 - i386
+baseurl=http://download.fedora.redhat.com/pub/fedora/linux/releases/8/Everything/i386/os/
+type=rpm-md
+
+You can see that on my machine, $releasever equates to 8, and $basearch
+is equal to i386.
+
+So the command to run create-smart-channels.php on my machine would be:
+
+[root@localhost yum.repos.d]# ./create-smart-channels.php 8 i386
+
+The script would run silently, and create any missing smart channels in
+/etc/yum.repos.d/new-smart-channels/ . If there are no missing Smart
+channels, the script will terminate.
+
+Adding the optional [d] argument would cause the script to output alot
+of debugging info. This is handy for knowing how the script works, and
+what it's doing.
+
+Installing new smart channels
+-----------------------------
+
+To install the newly created smart channel files, shut down smart
+package manager GUI if it is running. Copy the new smart channel files
+to /etc/smart/channels/, and restart smart GUI.
+
+Smart should now detect the new channel files, and ask whether to
+include those channels. Answer 'Yes' to include the new channel files.
+
+If you copy the livna channel files to /etc/smart/channels, you will be
+asked if you want to replace the existing Livna channels.
+
+On Fedora 8, selecting yes does not appear to create any problems.
+
+Resetting Smart to it's default installation settings
+
+Smart keeps some configuration files in /var/lib/smart. Channel data is
+kept here as well. When a new installation of Smart PM is done, this
+directory is empty.
+
+When Smart PM finishes, it saves it's cache and config files in
+/var/lib/smart/cache & /var/lib/smart/config.
+
+To reset Smart to it's default installation values:
+
+Quit Smart PM.
+
+Make some backup copies of /var/lib/smart directory, to something like:
+/var/lib/smart-prev
+
+Remove the contents of:
+
+/var/lib/smart/channels and /var/lib/smart/packages, and the cache and
+config file. That will leave two empty subdirs, /channels & /packages.
+
+Restarting Smart after removing the contents of /var/lib/smart will
+cause Smart to re-read the channel information in /etc/smart/channels/
+
+------------------------------------------------------------------------
+I specialise in PHP on LAMP or WAMP. I'm currently available and looking for
+work as the following:
+
+Javascript developer
+Web developer
+PHP & MySQL back end developer
+Linux System Administrator
+IT support technician
+
+My contact details are:
+
+Keith Roberts
+Tel:   +44 (0)1553 760619
+Mob:   0794 88503 41
+Email: keith@karsites.net
+
