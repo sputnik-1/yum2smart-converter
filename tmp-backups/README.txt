@@ -23,16 +23,3 @@ credit for initial development of create-smart-channels.php. Any
 feedback is welcome.
 
 -----------------------------------------------------------------------
-
-I specialise in PHP on LAMP or WAMP. I'm currently available looking for
-work as the following:
-
-Javascript developer
-PHP Web developer
-PHP & MySQL back end developer
-Linux System Administrator
-
-Keith Roberts
-Tel:   +44 (0)1553 760619
-Mob:   0794 88 503 41
-Email: keith@karsites.net
